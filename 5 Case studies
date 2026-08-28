@@ -1,0 +1,124 @@
+SYSTEM DESIGN IMPLEMENTATION
+1. URL Shortener (Bit.ly)
+Introduction
+A URL Shortener is a system that converts a long URL into a short URL. When the user clicks the short URL, it redirects to the original website.
+Functional Requirements
+•	Convert long URL into short URL. 
+•	Redirect users to the original URL. 
+•	Handle billions of URLs. 
+•	Support fast redirection. 
+Non-Functional Requirements
+•	High availability. 
+•	Low latency. 
+•	Scalable. 
+•	Reliable. 
+How it Works
+1.	User enters a long URL. 
+2.	Server generates a unique short code (for example: abc123). 
+3.	Store the mapping in the database. 
+4.	When someone clicks the short URL: 
+o	Check Redis cache first. 
+o	If found, redirect immediately. 
+o	Otherwise, fetch from the database and redirect. 
+
+
+
+Key Design Decisions
+•	Base62 Encoding creates short and unique URLs. 
+•	Redis Cache stores popular URLs for faster access. 
+•	Database (Cassandra/DynamoDB) stores URL mappings. 
+•	HTTP 301 for permanent redirect or 302 for temporary redirect. 
+Challenge
+Generating unique short URLs for billions of links.
+
+2. Rate Limiter
+Introduction
+"A Rate Limiter controls how many requests a user can send in a specific time. It protects the server from abuse and overload."
+Functional Requirements
+•	Limit requests by user, IP, or API key. 
+•	Reject requests after the limit. 
+Non-Functional Requirements
+•	Fast response. 
+•	High availability. 
+•	Distributed. 
+How it Works
+1.	Every request reaches the API Gateway. 
+2.	Redis stores the request count. 
+3.	If the count is below the limit, the request is allowed. 
+4.	If the limit is exceeded, return HTTP 429 – Too Many Requests. 
+Key Design Decisions
+•	Token Bucket algorithm allows small bursts. 
+•	Redis stores counters because it is very fast. 
+•	Place the limiter at the API Gateway to protect all services. 
+
+3. Chat Application (WhatsApp)
+Introduction
+"A Chat Application allows users to send and receive messages instantly. It also supports group chats, media sharing, and read receipts."
+Functional Requirements
+•	One-to-one chat. 
+•	Group chat. 
+•	Read receipts. 
+•	Media sharing. 
+•	Offline message storage. 
+Non-Functional Requirements
+•	Real-time communication. 
+•	High availability. 
+•	Scalable. 
+•	Reliable. 
+How it Works
+1.	Users connect using WebSocket. 
+2.	Sender sends a message. 
+3.	Server stores the message. 
+4.	If the receiver is online, the message is delivered instantly. 
+5.	If offline, it is stored and delivered when the receiver comes online. 
+Key Design Decisions
+•	WebSocket provides real-time communication. 
+•	Cassandra stores messages because it handles many writes. 
+•	S3/Object Storage stores images and videos. 
+•	Only the media link is sent in the chat. 
+
+4. Zero-Trust Adaptive Access Control System
+Problem Statement
+Design a security system that continuously verifies users and devices before allowing access to organizational applications.
+Instead of:
+Login once → trusted forever
+system follows:
+Never automatically trust → continuously verify.
+Functional Requirements
+•	User authentication 
+•	Device verification 
+•	Risk assessment 
+•	Application access control 
+•	MFA when required 
+•	Continuous session monitoring 
+•	Automatic session revocation 
+
+
+Non-Functional Requirements
+•	High security 
+•	Low latency 
+•	High availability 
+•	Scalability 
+•	Auditability
+•	
+•	 
+5. Ransomware Early Detection & Automatic Response System
+Problem Statement
+Design a system that detects ransomware-like behavior at an early stage and automatically isolates the affected device before the attack spreads.
+Functional Requirements
+•	Monitor endpoint activity 
+•	Detect abnormal file operations 
+•	Detect suspicious encryption behavior 
+•	Generate alerts 
+•	Calculate risk score 
+•	Isolate compromised devices 
+•	Notify security analysts 
+•	Maintain incident logs 
+Non-Functional Requirements
+•	Real-time detection 
+•	High availability 
+•	Low detection latency 
+•	Scalability 
+•	Reliable logging 
+ 
+
